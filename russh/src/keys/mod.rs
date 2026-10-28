@@ -388,6 +388,25 @@ Z9w7lshQhqowtrbLDFw4rXAxZuE=
         decode_secret_key(RSA_KEY, None).unwrap();
     }
 
+    #[cfg(feature = "rsa")]
+    #[test]
+    fn rsa_roundtrip_signatures() {
+        use signature::{Signer, Verifier};
+
+        let original = decode_secret_key(RSA_KEY, None).unwrap();
+        let encoded = pkcs8::encode_pkcs8(&original).unwrap();
+        let decoded = pkcs8::decode_pkcs8(&encoded, None).unwrap();
+        assert_eq!(decoded, original);
+        let key = decoded.key_data().rsa().unwrap();
+        let message = b"RSA compatibility fixture";
+        for hash in [HashAlg::Sha256, HashAlg::Sha512] {
+            let signature = (key, Some(hash)).try_sign(message).unwrap();
+            assert_eq!(signature.algorithm(), Algorithm::Rsa { hash: Some(hash) });
+            Verifier::verify(decoded.public_key(), message, &signature).unwrap();
+            assert!(Verifier::verify(decoded.public_key(), b"Changed fixture", &signature).is_err());
+        }
+    }
+
     #[test]
     fn test_decode_openssh_p256_secret_key() {
         // Generated using: ssh-keygen -t ecdsa -b 256 -m rfc4716 -f $file
