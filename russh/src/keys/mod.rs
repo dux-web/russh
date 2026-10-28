@@ -396,7 +396,8 @@ Z9w7lshQhqowtrbLDFw4rXAxZuE=
         let original = decode_secret_key(RSA_KEY, None).unwrap();
         let encoded = pkcs8::encode_pkcs8(&original).unwrap();
         let decoded = pkcs8::decode_pkcs8(&encoded, None).unwrap();
-        assert_eq!(decoded, original);
+        assert_eq!(decoded.key_data(), original.key_data());
+        assert_eq!(pkcs8::encode_pkcs8(&decoded).unwrap(), encoded);
         let key = decoded.key_data().rsa().unwrap();
         let message = b"RSA compatibility fixture";
         for hash in [HashAlg::Sha256, HashAlg::Sha512] {
