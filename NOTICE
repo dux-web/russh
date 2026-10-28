@@ -1,0 +1,11 @@
+Russh compatibility maintenance
+
+Based on Russh 0.62.4 at 0089c89c94753bebbec12b956c07a1cd38740379:
+https://github.com/Eugeny/russh
+
+Sailry contributors update the exact RSA and PKCS#1 release candidates to
+0.10.0-rc.19 and 0.8.0-rc.5, and use the renamed borrowed RsaPrivateKeyRef
+type. This preserves RSA SSH support alongside GPUI Kit 0.8.1 standard
+modules. No other production source changes are applied.
+
+Russh is distributed under Apache-2.0. See LICENSE.txt.
